@@ -1,11 +1,12 @@
 use crate::helpers;
 use regex::Regex;
-use std::fs;
+use std::{fs, sync::LazyLock};
 
 fn compute_mult_sums(content: &str) -> i32 {
+    // Only compile this once
+    static MULT_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"mul\((\d+),(\d+)\)").unwrap());
     // TODO: Recompiling this on each function call is undesirable
-    let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
-    let args = re.captures_iter(&content).map(|caps| {
+    let args = MULT_RE.captures_iter(&content).map(|caps| {
         // Array sizes must be known at compile time, and our regex has two capture groups
         // so every array will have size 2
         let (_, args): (_, [&str; 2]) = caps.extract();
@@ -15,8 +16,11 @@ fn compute_mult_sums(content: &str) -> i32 {
 }
 
 fn with_conditionals(content: &str) -> i32 {
-    let ops_re = Regex::new(r"(do\(\))|(don't\(\))|(mul\(\d+,\d+\))").unwrap();
-    let ops: Vec<&str> = ops_re
+    // Only compile this once
+    static OPS_RE: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"(do\(\))|(don't\(\))|(mul\(\d+,\d+\))").unwrap());
+
+    let ops: Vec<&str> = OPS_RE
         .captures_iter(&content)
         .map(|caps| {
             let (_, [matches]) = caps.extract();
