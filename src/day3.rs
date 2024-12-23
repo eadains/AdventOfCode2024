@@ -17,6 +17,7 @@ fn compute_mult_sums(content: &str) -> i32 {
 
 fn with_conditionals(content: &str) -> i32 {
     // Only compile this once
+    // Matches 'do()' 'don't()' and 'mul(*,*)'
     static OPS_RE: LazyLock<Regex> =
         LazyLock::new(|| Regex::new(r"(do\(\))|(don't\(\))|(mul\(\d+,\d+\))").unwrap());
 
@@ -28,6 +29,9 @@ fn with_conditionals(content: &str) -> i32 {
         })
         .collect();
 
+    // We have list of all relevant operators, keep track of whether
+    // we are supposed to execute by looking at "do" and "don't" operators
+    // and add up the mults as we go along
     let mut enabled = true;
     let mut sum = 0;
     for i in 0..ops.len() {
