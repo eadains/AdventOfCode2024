@@ -1,5 +1,26 @@
 use crate::helpers;
 
+fn coords_to_string<const N: usize>(
+    content: &Vec<Vec<char>>,
+    coords: &[(isize, isize); N],
+) -> String {
+    // Trasnform array of (x, y) coordinate pairs to a String of characters selected
+    // from input matrix
+    coords
+        .iter()
+        .map(|(x, y)| {
+            // The get function returns an Option that is None if the index is out of bounds
+            // automatically handling cases where there aren't enough characters in whatever
+            // direction we're looking
+            content
+                .get(*x as usize)
+                .and_then(|row| row.get(*y as usize))
+                // If either index is out-of-bounds, return this default value
+                .unwrap_or(&'-')
+        })
+        .collect()
+}
+
 pub fn solve() {
     let content: Vec<Vec<char>> = include_str!("../inputs/day4")
         .lines()
@@ -21,18 +42,7 @@ pub fn solve() {
             ]
         })
         .filter(|coords| {
-            let letters = coords.iter().map(|(x, y)| {
-                // The get function returns an Option that is None if the index is out of bounds
-                // automatically handling cases where there aren't enough characters in whatever
-                // direction we're looking
-                content
-                    .get(*x as usize)
-                    .and_then(|row| row.get(*y as usize))
-                    // If either index is out-of-bounds, return this default value
-                    .unwrap_or(&'-')
-            });
-            // TODO: This is really inefficient because it has to allocate this string every iteration
-            let s = String::from_iter(letters);
+            let s = coords_to_string(&content, coords);
             s == "XMAS" || s == "SAMX"
         })
         .count();
@@ -46,28 +56,8 @@ pub fn solve() {
             ]
         })
         .filter(|[coords1, coords2]| {
-            let letters1 = coords1.iter().map(|(x, y)| {
-                // The get function returns an Option that is None if the index is out of bounds
-                // automatically handling cases where there aren't enough characters in whatever
-                // direction we're looking
-                content
-                    .get(*x as usize)
-                    .and_then(|row| row.get(*y as usize))
-                    // If either index is out-of-bounds, return this default value
-                    .unwrap_or(&'-')
-            });
-            let letters2 = coords2.iter().map(|(x, y)| {
-                // The get function returns an Option that is None if the index is out of bounds
-                // automatically handling cases where there aren't enough characters in whatever
-                // direction we're looking
-                content
-                    .get(*x as usize)
-                    .and_then(|row| row.get(*y as usize))
-                    // If either index is out-of-bounds, return this default value
-                    .unwrap_or(&'-')
-            });
-            let s1 = String::from_iter(letters1);
-            let s2 = String::from_iter(letters2);
+            let s1 = coords_to_string(&content, &coords1);
+            let s2 = coords_to_string(&content, coords2);
             (s1 == "MAS" || s1 == "SAM") && (s2 == "MAS" || s2 == "SAM")
         })
         .count();
