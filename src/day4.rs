@@ -1,9 +1,6 @@
 use crate::helpers;
 
-fn coords_to_string<const N: usize>(
-    content: &Vec<Vec<char>>,
-    coords: &[(isize, isize); N],
-) -> String {
+fn coords_to_string<const N: usize>(content: &[Vec<char>], coords: &[(isize, isize); N]) -> String {
     // Trasnform array of (x, y) coordinate pairs to a String of characters selected
     // from input matrix
     coords
@@ -31,7 +28,7 @@ pub fn solve() {
     let ans1 = (0..content.len())
         // Generates tuples of every coordinate in the matrix: (row, col)
         // Must convert to isize to support negative numbers
-        .flat_map(|x| (0..content[x as usize].len()).map(move |y| (x as isize, y as isize)))
+        .flat_map(|x| (0..content[x].len()).map(move |y| (x as isize, y as isize)))
         // Generates arrays of coordinates corresponding to each direction we want to check given the starting coordinate
         .flat_map(|(x, y)| {
             [
@@ -48,7 +45,7 @@ pub fn solve() {
         .count();
 
     let ans2 = (0..content.len())
-        .flat_map(|x| (0..content[x as usize].len()).map(move |y| (x as isize, y as isize)))
+        .flat_map(|x| (0..content[x].len()).map(move |y| (x as isize, y as isize)))
         .map(|(x, y)| {
             [
                 [(x - 1, y - 1), (x, y), (x + 1, y + 1)], // Upper-left to lower-right
@@ -56,7 +53,7 @@ pub fn solve() {
             ]
         })
         .filter(|[coords1, coords2]| {
-            let s1 = coords_to_string(&content, &coords1);
+            let s1 = coords_to_string(&content, coords1);
             let s2 = coords_to_string(&content, coords2);
             (s1 == "MAS" || s1 == "SAM") && (s2 == "MAS" || s2 == "SAM")
         })

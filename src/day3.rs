@@ -6,7 +6,7 @@ fn compute_mult_sums(content: &str) -> i32 {
     // Only compile this once
     static MULT_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"mul\((\d+),(\d+)\)").unwrap());
     // TODO: Recompiling this on each function call is undesirable
-    let args = MULT_RE.captures_iter(&content).map(|caps| {
+    let args = MULT_RE.captures_iter(content).map(|caps| {
         // Array sizes must be known at compile time, and our regex has two capture groups
         // so every array will have size 2
         let (_, args): (_, [&str; 2]) = caps.extract();
@@ -22,7 +22,7 @@ fn with_conditionals(content: &str) -> i32 {
         LazyLock::new(|| Regex::new(r"(do\(\))|(don't\(\))|(mul\(\d+,\d+\))").unwrap());
 
     let ops: Vec<&str> = OPS_RE
-        .captures_iter(&content)
+        .captures_iter(content)
         .map(|caps| {
             let (_, [matches]) = caps.extract();
             matches
@@ -34,16 +34,16 @@ fn with_conditionals(content: &str) -> i32 {
     // and add up the mults as we go along
     let mut enabled = true;
     let mut sum = 0;
-    for i in 0..ops.len() {
-        if ops[i].contains("mul") {
+    for op in ops {
+        if op.contains("mul") {
             if enabled {
-                sum += compute_mult_sums(&ops[i]);
+                sum += compute_mult_sums(op);
             } else if !enabled {
                 continue;
             }
-        } else if ops[i].contains("don't") {
+        } else if op.contains("don't") {
             enabled = false;
-        } else if ops[i].contains("do") & !enabled {
+        } else if op.contains("do") & !enabled {
             enabled = true;
         }
     }

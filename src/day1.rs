@@ -1,5 +1,4 @@
 use crate::helpers;
-use std::i32;
 
 fn read_file(path: &str) -> (Vec<i32>, Vec<i32>) {
     let mut list1: Vec<i32> = Vec::new();
@@ -14,12 +13,12 @@ fn read_file(path: &str) -> (Vec<i32>, Vec<i32>) {
     (list1, list2)
 }
 
-fn compute_total_distance(list1: &Vec<i32>, list2: &Vec<i32>) -> i32 {
+fn compute_total_distance(list1: &[i32], list2: &[i32]) -> i32 {
     let it = list1.iter().zip(list2.iter());
     it.map(|(x, y)| (x - y).abs()).sum()
 }
 
-fn count_occurrences(value: &i32, v: &Vec<i32>) -> i32 {
+fn count_occurrences(value: &i32, v: &[i32]) -> i32 {
     v.iter().filter(|&x| x == value).count().try_into().unwrap()
 }
 

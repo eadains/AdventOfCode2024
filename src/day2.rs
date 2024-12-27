@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 
 use crate::helpers;
 
-fn check_strictly_monotone(v: &Vec<i32>) -> bool {
+fn check_strictly_monotone(v: &[i32]) -> bool {
     let increasing = match v[1].cmp(&v[0]) {
         // If first two elements are already not strictly monotone we can exit immediately
         Ordering::Equal => return false,
@@ -23,29 +23,27 @@ fn check_strictly_monotone(v: &Vec<i32>) -> bool {
             return false;
         }
     }
-    return true;
+    true
 }
 
-fn check_differences(v: &Vec<i32>) -> bool {
+fn check_differences(v: &[i32]) -> bool {
     for i in 1..v.len() {
         let diff = (v[i] - v[i - 1]).abs();
-        if diff < 1 {
-            return false;
-        } else if diff > 3 {
+        if !(1..=3).contains(&diff) {
             return false;
         }
     }
-    return true;
+    true
 }
 
-fn remove_one_check(v: &Vec<i32>) -> bool {
+fn remove_one_check(v: &[i32]) -> bool {
     for i in 0..v.len() {
         let dropped_v = [&v[..i], &v[i + 1..]].concat();
         if check_strictly_monotone(&dropped_v) & check_differences(&dropped_v) {
             return true;
         }
     }
-    return false;
+    false
 }
 
 pub fn solve() {
